@@ -1,290 +1,250 @@
-🏭 AutoFactoryScope
+# 🏭 AutoFactoryScope
 
-Machine-Learning–Powered Factory Layout Robot Detection System
-C# WPF Frontend + Python ONNX Inference Backend
+**Intelligent Factory Layout Robot Detection System**\
+**C# WPF (MVP) + Python ONNX Runtime Backend + YOLOv8**
 
-📌 Overview
+------------------------------------------------------------------------
 
-AutoFactoryScope is an end-to-end system designed to automatically detect industrial robots on large-scale 2D factory layout images.
+## 🎯 Project Purpose
 
-It combines:
+**AutoFactoryScope** is a machine‑learning powered tool that
+automatically detects industrial robots in large‑scale factory layout
+drawings.\
+It is designed for manufacturing engineering, robotics planning, and
+digital factory teams who work with CAD-based 2D layout drawings
+(Body‑in‑White, Trim, Chassis, etc.)
 
-YOLOv8-based object detection
+The system brings together:
 
-ONNX-optimized inference backend (Python)
+-   🧠 **YOLOv8 object detection**
+-   ⚡ **Optimized ONNX inference pipeline**
+-   🐍 **Python backend (FastAPI)**
+-   🖥️ **C# WPF desktop client (MVP / temporary)**
+-   🔁 **Scalable architecture that can migrate to a web frontend
+    later**
 
-C# WPF desktop frontend
+This README documents the full architecture, setup, and development
+workflow.
 
-512×512 tile-based processing pipeline for large factory drawings
+------------------------------------------------------------------------
 
-Automatic robot counting + bounding box rendering
+# 🚀 System Architecture
 
-This project enables engineers to rapidly analyze factory layouts, count robot instances, and visualize ML-detected results.
+## High-Level Architecture Diagram (ASCII)
 
-✨ Key Features
-🔹 1. ML Detection Pipeline
+    ┌─────────────────────────┐
+    │     Frontend (MVP)      │
+    │    C# WPF Desktop App   │
+    │  - Image Upload         │
+    │  - Sends to API         │
+    │  - Shows annotated image│
+    └───────────────┬─────────┘
+                    │ HTTP POST (multipart/form-data)
+                    ▼
+    ┌──────────────────────────────────────────┐
+    │        Python Inference Backend          │
+    │        FastAPI / ONNX Runtime            │
+    │------------------------------------------│
+    │ 1. Receive layout image                  │
+    │ 2. Preprocess + Tile into 512×512        │
+    │ 3. YOLOv8 ONNX Inference                 │
+    │ 4. Merge tile detections                 │
+    │ 5. Non-max suppression                   │
+    │ 6. Draw bounding boxes                   │
+    │ 7. Return JSON + Annotated image         │
+    └───────────────────┬──────────────────────┘
+                        │
+                        ▼
+    ┌──────────────────────────────────────────┐
+    │          Output to User (WPF)            │
+    │  - Robot count                           │
+    │  - Bounding box overlays                 │
+    │  - Exported annotated layout             │
+    └──────────────────────────────────────────┘
 
-Trained YOLO model (exported to ONNX)
+------------------------------------------------------------------------
 
-512×512 tiling with overlap for high-resolution layouts
+# 🏛️ Repository Structure (Auto‑Generated)
 
-Detection stitching & post-processing
+    AutoFactoryScope/
+    ├─ README.md
+    ├─ LICENSE
+    ├─ .gitignore
+    ├─ .gitattributes
+    ├─ .editorconfig
+    │
+    ├─ .github/
+    │  ├─ workflows/
+    │  │  ├─ backend-ci.yml
+    │  │  └─ frontend-ci.yml
+    │  └─ ISSUE_TEMPLATE/
+    │     ├─ bug_report.md
+    │     └─ feature_request.md
+    │
+    ├─ models/
+    │  ├─ robot_detector.onnx
+    │  └─ label_map.json
+    │
+    ├─ notebooks/
+    │  ├─ 01_eda.ipynb
+    │  ├─ 02_training_experiments.ipynb
+    │  └─ 03_inference_tests.ipynb
+    │
+    ├─ data/
+    │  ├─ samples/
+    │  │  ├─ layout_example_1.png
+    │  │  └─ layout_example_2.png
+    │  └─ README.md
+    │
+    ├─ src/
+    │  ├─ backend/
+    │  │  └─ autofactoryscope_api/
+    │  │     ├─ main.py
+    │  │     ├─ inference.py
+    │  │     ├─ tiling.py
+    │  │     ├─ postprocess.py
+    │  │     ├─ visualize.py
+    │  │     ├─ config.py
+    │  │     └─ requirements.txt
+    │  │
+    │  └─ frontend/
+    │     └─ AutoFactoryScope.Desktop/
+    │        ├─ App.xaml
+    │        ├─ MainWindow.xaml
+    │        ├─ ViewModels/
+    │        ├─ Services/
+    │        └─ Models/
+    │
+    └─ scripts/
+       ├─ run_backend_dev.sh
+       ├─ run_backend_dev.bat
+       └─ export_model_notes.md
 
-Non-maximum suppression (NMS)
+------------------------------------------------------------------------
 
-One-step inference pipeline via /infer endpoint
+# 🧠 ML Pipeline Summary
 
-🔹 2. Python Backend
+### Dataset
 
-REST API (FastAPI or Flask)
+-   High‑resolution factory layouts\
+-   Split into overlapping 512×512 tiles\
+-   Annotated in Roboflow\
+-   Custom deterministic splitter for consistent train/val/test sets
 
-ONNX Runtime for high-performance inference
+### Model
 
-Preprocessing, tiling, merging, visualization
+-   YOLOv8\
+-   Tuned using `model.tune()`\
+-   Exported to ONNX for inference speed
 
-JSON and image output
+### Inference
 
-🔹 3. C# WPF Frontend
+-   Tiled prediction\
+-   Post-merge of detections to global coordinates\
+-   Final annotated image produced
 
-Clean UI for selecting an image
+------------------------------------------------------------------------
 
-Sends image to backend via HTTP
+# 🐍 Backend Setup (Python / FastAPI)
 
-Displays annotated output image
+### Install dependencies
 
-Shows metadata and robot counts
-
-🔹 4. Modular Project Structure
-
-models/ for ONNX weights
-
-notebooks/ for EDA, training artifacts
-
-backend/ for API + inference
-
-frontend/ for WPF application
-
-scripts/ for dev tools
-
-🧠 System Architecture
-+------------------+
-|    WPF Frontend  |
-| (C#, .NET 8 WPF) |
-+--------+---------+
-         |
-         | HTTP (POST multipart/form-data)
-         v
-+--------------------------+
-|  Python Inference API    |
-|  (FastAPI / Flask)       |
-|    - Preprocess          |
-|    - Tile (512x512)      |
-|    - ONNX Inference      |
-|    - Merge Detections    |
-|    - Draw Boxes          |
-+------------+-------------+
-             |
-             | PNG + JSON
-             v
-+--------------------------+
-|  WPF Renders Result      |
-+--------------------------+
-
-🗂 Repository Structure
-AutoFactoryScope/
-├─ README.md
-├─ LICENSE
-├─ .gitignore
-├─ .gitattributes
-├─ .editorconfig
-│
-├─ .github/
-│  ├─ workflows/            # Continuous Integration (C# backend, Python backend)
-│  └─ ISSUE_TEMPLATE/
-│     ├─ bug_report.md
-│     └─ feature_request.md
-│
-├─ models/
-│  ├─ robot_detector.onnx   # Exported YOLO model
-│  └─ label_map.json
-│
-├─ notebooks/
-│  ├─ 01_eda.ipynb
-│  ├─ 02_training_experiments.ipynb
-│  └─ 03_inference_tests.ipynb
-│
-├─ data/
-│  ├─ samples/              # Example layout images
-│  └─ README.md
-│
-├─ src/
-│  ├─ backend/
-│  │  └─ autofactoryscope_api/
-│  │     ├─ main.py
-│  │     ├─ inference.py
-│  │     ├─ tiling.py
-│  │     ├─ postprocess.py
-│  │     ├─ visualize.py
-│  │     ├─ config.py
-│  │     └─ requirements.txt
-│  │
-│  └─ frontend/
-│     └─ AutoFactoryScope.Desktop/
-│        ├─ App.xaml
-│        ├─ MainWindow.xaml
-│        ├─ ViewModels/
-│        ├─ Services/
-│        └─ Models/
-│
-└─ scripts/
-   ├─ run_backend_dev.sh
-   ├─ run_backend_dev.bat
-   └─ export_model_notes.md
-
-🚀 Getting Started
-🔧 1. Install Backend (Python)
-
-Python 3.10+ recommended
-
+``` bash
 cd src/backend/autofactoryscope_api
 pip install -r requirements.txt
+```
 
+### Run API
 
-Run the server:
-
+``` bash
 uvicorn autofactoryscope_api.main:app --reload --host 0.0.0.0 --port 8000
+```
 
-
-The API is now available at:
-
+Open API docs at:\
 http://localhost:8000/docs
 
-🖥️ 2. Run the WPF Frontend
+------------------------------------------------------------------------
 
-Open:
+# 🖥️ Frontend Setup (C# WPF MVP)
 
-src/frontend/AutoFactoryScope.Desktop/AutoFactoryScope.Desktop.sln
+### Why WPF?
 
+-   Quickest path to a working MVP
+-   Easier for local testing and debugging
+-   Simple integration with backend via HttpClient
 
-Build and run.
+### Long-term note
 
-Default API endpoint:
+> **WPF is a temporary MVP technology.**
+>
+> The architecture has been intentionally designed so the frontend can
+> later be replaced with: - A web dashboard (React, Blazor, Vue) -
+> Electron or MAUI - Integration into existing factory engineering tools
 
-http://localhost:8000/infer/image
+This ensures **AutoFactoryScope is future-proof**.
 
-📤 Inference API
-POST /infer
+------------------------------------------------------------------------
 
-Returns detection metadata (JSON)
+# 🔁 Branching Strategy
 
-POST /infer/image
+    main       – production-ready
+    develop    – integration branch
+    feature/*  – per-task development
+    hotfix/*   – urgent fixes into main
 
-Returns annotated PNG/JPEG with bounding boxes.
+### Rules
 
-Request:
+-   **No direct commits to `main`**
+-   All work flows through PRs → `develop` → `main`
+-   Squash merges recommended
+-   Feature branches named as:
+    -   `feature/tiling-optimization`
+    -   `feature/wpf-ui-upload`
+    -   `feature/backend-nms`
 
-Content-Type: multipart/form-data
-Field: image (file)
+------------------------------------------------------------------------
 
+# 🔒 Security & DevOps Notes
 
-Response:
+### Recommended GitHub configuration
 
-Annotated image
+-   Protect `main`
+-   Require PR review
+-   Require CI checks once implemented
+-   Restrict deletions & force pushes
 
-Detection metadata (robot count, bounding boxes)
+### CI (planned)
 
-🧪 Machine Learning Notes
-✔ Model
+-   Backend unit tests (pytest)
+-   ONNX inference smoke test
+-   Frontend build validation
 
-YOLOv8
+------------------------------------------------------------------------
 
-Small architecture tuned for symbol-level detection
+# 🗺️ Roadmap
 
-Trained via Google Colab
+### Phase 1 (Current)
 
-Hyperparameter tuning performed (model.tune())
+-   Full ONNX inference backend\
+-   MVP WPF client\
+-   Initial CI
 
-✔ Dataset
+### Phase 2
 
-Entire factory layout PNGs
+-   Web dashboard replacement for WPF\
+-   Multi-layout analysis\
+-   Automatic report generation
 
-Preprocessing into 512×512 tiles
+### Phase 3
 
-Annotated using Roboflow
+-   Robot type classification\
+-   Symbol clustering\
+-   Scalability for enterprise datasets
 
-Custom deterministic train/val/test splitter
+------------------------------------------------------------------------
 
-✔ ONNX Export
+# 📄 License
 
-Used for optimized CPU inference in production.
+MIT (or your selected license)
 
-🛠 Development Workflow
-🔥 Branching Strategy
-main      – protected, production-ready
-develop   – staging branch for stable work
-feature/* – individual contributor branches
-
-💬 Pull Request Requirements
-
-Code builds successfully
-
-Linting passes
-
-At least 1 approval
-
-No direct commits to main
-
-(If GitHub Team is not enabled, use the “Develop branch only” workflow.)
-
-🔒 Security Practices
-
-No force pushes to protected branches
-
-Sensitive data (layout images from real factories) excluded
-
-Notebook outputs sanitized before commit
-
-ONNX model weights licensed internally
-
-📅 Roadmap
-Phase 1 (Current)
-
-Backend inference pipeline
-
-WPF integration
-
-Core YOLO model
-
-Phase 2
-
-Add batch inference
-
-Add robot-type classification
-
-Add heatmap overlay mode (density map)
-
-Phase 3
-
-Multi-layout comparison
-
-Integrate into enterprise workflow tools
-
-Auto-report generation (PDF/Excel)
-
-🤝 Contributing
-
-Guidelines:
-
-Feature branches only (feature/xyz)
-
-PR required for all merges
-
-Clean commit history (squash recommended)
-
-Add tests for backend changes
-
-Keep frontend code MVVM-aligned
-
-📄 License
-
-MIT License (or your chosen license)
+------------------------------------------------------------------------
