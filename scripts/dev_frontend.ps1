@@ -1,90 +1,75 @@
 # Development script for AutoFactoryScope frontend
-# Windows PowerShell script to build and run the WPF desktop application
+# Windows PowerShell script to build and run the TypeScript/React web application
 
 $ErrorActionPreference = "Stop"
 
-$FrontendDir = Join-Path $PSScriptRoot "..\src\frontend\AutoFactoryScope.Desktop"
+$FrontendDir = Join-Path $PSScriptRoot "..\src\frontend\autofactoryscope-web"
 $FrontendDir = Resolve-Path $FrontendDir -ErrorAction SilentlyContinue
 
 if (-not $FrontendDir) {
     Write-Error "Frontend directory not found: $FrontendDir"
-    Write-Error "Expected path: src/frontend/AutoFactoryScope.Desktop"
+    Write-Error "Expected path: src/frontend/autofactoryscope-web"
     exit 1
 }
 
 Set-Location $FrontendDir
 
-# Check for .NET SDK
-$dotnetCmd = Get-Command dotnet -ErrorAction SilentlyContinue
-if (-not $dotnetCmd) {
-    Write-Error ".NET SDK not found. Please install .NET 8 SDK or later."
+# Check for Node.js
+$nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+if (-not $nodeCmd) {
+    Write-Error "Node.js not found. Please install Node.js 18 or later."
     exit 1
 }
 
-# Check .NET version
-$dotnetVersion = dotnet --version
-Write-Host "Using .NET SDK: $dotnetVersion"
+# Check Node.js version
+$nodeVersion = node --version
+Write-Host "Using Node.js: $nodeVersion"
 
-# Check for solution or project file
-$projectFile = Get-ChildItem -Filter "*.csproj" -ErrorAction SilentlyContinue
-$solutionFile = Get-ChildItem -Filter "*.sln" -ErrorAction SilentlyContinue
-
-if (-not $projectFile -and -not $solutionFile) {
-    Write-Error "No .csproj or .sln file found in $FrontendDir"
+# Check for npm
+$npmCmd = Get-Command npm -ErrorAction SilentlyContinue
+if (-not $npmCmd) {
+    Write-Error "npm not found. Please install npm (comes with Node.js)."
     exit 1
 }
 
-# Restore dependencies
-Write-Host "Restoring dependencies..."
-if ($solutionFile) {
-    dotnet restore $solutionFile.Name
-} else {
-    dotnet restore
-}
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Failed to restore dependencies"
+# Check for package.json
+if (-not (Test-Path "package.json")) {
+    Write-Error "package.json not found in $FrontendDir"
+    Write-Error "This doesn't appear to be a valid Node.js project."
     exit 1
 }
 
-# Build
-Write-Host "Building project (Debug configuration)..."
-if ($solutionFile) {
-    dotnet build $solutionFile.Name --configuration Debug
-} else {
-    dotnet build --configuration Debug
+# Check for SkipInstall flag
+$skipInstall = $args -contains "--SkipInstall"
+
+# Install dependencies if not skipping
+if (-not $skipInstall) {
+    Write-Host "Installing dependencies..."
+    npm install
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Failed to install dependencies"
+        exit 1
+    }
 }
 
-if ($LASTEXITCODE -ne 0) {
-    Write-Error "Build failed"
-    exit 1
+# Check if --build flag is provided
+$shouldBuild = $args -contains "--build"
+
+if ($shouldBuild) {
+    Write-Host "Building project..."
+    npm run build
+    if ($LASTEXITCODE -ne 0) {
+        Write-Error "Build failed"
+        exit 1
+    }
+    Write-Host "Build successful!"
+    exit 0
 }
 
-Write-Host "Build successful!"
+# Default: run development server
+Write-Host "Starting development server..."
+Write-Host "Frontend will be available at http://localhost:5173 (or next available port)"
+Write-Host "Press Ctrl+C to stop"
 Write-Host ""
 
-# Check if --run flag is provided
-$shouldRun = $args -contains "--run"
-
-if ($shouldRun) {
-    Write-Host "Running application..."
-    Write-Host "Press Ctrl+C to stop"
-    Write-Host ""
-    
-    if ($solutionFile) {
-        dotnet run --project $projectFile.Name
-    } else {
-        dotnet run
-    }
-} else {
-    Write-Host "To run the application, use:"
-    Write-Host "  .\scripts\dev_frontend.ps1 --run"
-    Write-Host ""
-    Write-Host "Or manually:"
-    if ($solutionFile) {
-        Write-Host "  dotnet run --project $($projectFile.Name)"
-    } else {
-        Write-Host "  dotnet run"
-    }
-}
-
+npm run dev

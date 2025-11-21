@@ -17,15 +17,17 @@ The backend is the core inference engine that processes factory layout images an
 - **`postprocess.py`**: Merges tile detections to global coordinates, applies Non-Maximum Suppression (NMS)
 - **`visualize.py`**: Draws bounding boxes on original image, generates annotated output
 
-### Frontend (C# WPF MVP)
+### Frontend (TypeScript/React)
 
-The WPF desktop application is a temporary MVP client that provides:
+The React web application provides:
 
-- Image upload interface
-- HTTP client to communicate with backend API
-- Display of detection results (counts, bounding boxes, annotated image)
+- Image upload interface with drag-and-drop support
+- HTTP client (fetch/axios) to communicate with backend API
+- Interactive display of detection results (counts, bounding boxes, annotated image)
+- Real-time progress indicators
+- Responsive design for various screen sizes
 
-**Architecture Note:** The frontend is intentionally decoupled from the backend. The backend exposes a standard REST API that any HTTP client can consume. This allows the WPF client to be replaced with a web dashboard, mobile app, or integrated into existing tools without backend changes.
+**Architecture Note:** The frontend is intentionally decoupled from the backend. The backend exposes a standard REST API that any HTTP client can consume. This allows the web frontend to be extended, replaced, or integrated into existing tools without backend changes.
 
 ### ML Pipeline
 
@@ -131,11 +133,18 @@ Returns JSON response containing:
 
 ## Frontend Integration
 
-The WPF client communicates with the backend via standard HTTP:
+The React frontend communicates with the backend via standard HTTP:
 
-1. **Upload**: `HttpClient.PostAsync()` with `MultipartFormDataContent`
-2. **Receive**: Deserialize JSON response, decode base64 image if needed
-3. **Display**: Render annotated image in WPF Image control, show statistics in UI
+1. **Upload**: `fetch()` or `axios.post()` with `FormData` containing the image file
+2. **Receive**: Parse JSON response, decode base64 image if needed, handle errors
+3. **Display**: Render annotated image in `<img>` or canvas element, show statistics in React components
+4. **State Management**: React hooks (useState, useEffect) or state management library for application state
+
+**Technology Stack:**
+- React 18+ for UI components
+- TypeScript for type safety
+- Vite for build tooling and dev server
+- Modern fetch API or axios for HTTP requests
 
 The backend API is stateless and frontend-agnostic. Any client (web, mobile, desktop) can use the same endpoints.
 
@@ -166,11 +175,14 @@ Backend configuration (via `config.py` or environment variables):
 
 ## Future Architecture Evolution
 
-When replacing WPF with a web dashboard:
+The current web frontend can be extended with:
 
-- Backend remains unchanged (REST API)
-- New frontend consumes same endpoints
-- Optional: Add WebSocket support for real-time progress updates
-- Optional: Add authentication/authorization middleware
-- Optional: Add result caching and storage layer
+- **Enhanced UI/UX**: More interactive visualizations, zoom/pan for large images
+- **Real-time Updates**: WebSocket support for long-running inference tasks
+- **Authentication**: User authentication and authorization
+- **Result Storage**: Caching and persistence layer for detection results
+- **Batch Processing UI**: Interface for processing multiple layouts
+- **Advanced Analytics**: Charts, statistics, and reporting features
+
+The backend remains unchanged (REST API), allowing frontend evolution without backend modifications.
 

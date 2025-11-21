@@ -1,7 +1,7 @@
 # 🏭 AutoFactoryScope
 
 **Intelligent Factory Layout Robot Detection System**\
-**C# WPF (MVP) + Python ONNX Runtime Backend + YOLOv8**
+**TypeScript/React Web Frontend + Python ONNX Runtime Backend + YOLOv8**
 
 ------------------------------------------------------------------------
 
@@ -19,9 +19,8 @@ The system brings together:
 -   🧠 **YOLOv8 object detection**
 -   ⚡ **Optimized ONNX inference pipeline**
 -   🐍 **Python backend (FastAPI)**
--   🖥️ **C# WPF desktop client (MVP / temporary)**
--   🔁 **Scalable architecture that can migrate to a web frontend
-    later**
+-   🌐 **TypeScript/React web frontend**
+-   🔁 **Scalable, frontend-agnostic architecture**
 
 This README documents the full architecture, setup, and development
 workflow.
@@ -33,11 +32,12 @@ workflow.
 ## High-Level Architecture Diagram 
 
     ┌─────────────────────────┐
-    │     Frontend (MVP)      │
-    │    C# WPF Desktop App   │
+    │   Web Frontend (React)  │
+    │   TypeScript + Vite     │
     │  - Image Upload         │
     │  - Sends to API         │
     │  - Shows annotated image│
+    │  - Interactive results  │
     └───────────────┬─────────┘
                     │ HTTP POST (multipart/form-data)
                     ▼
@@ -56,7 +56,7 @@ workflow.
                         │
                         ▼
     ┌──────────────────────────────────────────┐
-    │          Output to User (WPF)            │
+    │          Output to User (Web)            │
     │  - Robot count                           │
     │  - Bounding box overlays                 │
     │  - Exported annotated layout             │
@@ -108,12 +108,13 @@ workflow.
     │  │     └─ requirements.txt
     │  │
     │  └─ frontend/
-    │     └─ AutoFactoryScope.Desktop/
-    │        ├─ App.xaml
-    │        ├─ MainWindow.xaml
-    │        ├─ ViewModels/
-    │        ├─ Services/
-    │        └─ Models/
+    │     └─ autofactoryscope-web/
+    │        ├─ src/
+    │        ├─ public/
+    │        ├─ package.json
+    │        ├─ tsconfig.json
+    │        ├─ vite.config.ts
+    │        └─ index.html
     │
     └─ scripts/
        ├─ run_backend_dev.sh
@@ -186,40 +187,61 @@ http://localhost:8000/docs
 
 ------------------------------------------------------------------------
 
-# 🖥️ Frontend Setup (C# WPF MVP)
+# 🌐 Frontend Setup (TypeScript/React)
 
 ### Prerequisites
 
-- **.NET 8 SDK** or later
-- Visual Studio 2022 (recommended) or Visual Studio Code with C# extension
-- Windows (WPF is Windows-only)
+- **Node.js 18+** and **npm** (or **yarn**/ **pnpm**)
+- Modern web browser
 
-### Build and run
+### Install dependencies
 
 ``` bash
-cd src/frontend/AutoFactoryScope.Desktop
+cd src/frontend/autofactoryscope-web
 
-# Restore dependencies
-dotnet restore
+# Install dependencies
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
 
-# Build (Debug)
-dotnet build
+### Development server
 
-# Run
-dotnet run
+``` bash
+# Start development server
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+```
+
+The frontend will be available at `http://localhost:5173` (or the next available port).
+
+### Build for production
+
+``` bash
+# Build for production
+npm run build
+# or
+yarn build
+# or
+pnpm build
 ```
 
 ### Backend URL configuration
 
-The WPF client must be configured to connect to the backend API. By default, it expects the backend at `http://localhost:8000`. Update the backend URL in the application configuration or service settings if your backend runs on a different host or port.
+The frontend is configured to connect to the backend API at `http://localhost:8000` by default. Update the `VITE_API_URL` environment variable or configuration file if your backend runs on a different host or port.
 
-### Why WPF?
+### Technology Stack
 
--   Quickest path to a working MVP
--   Easier for local testing and debugging
--   Simple integration with backend via HttpClient
+- **React 18+** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **Modern ES6+** - JavaScript features
 
-### Long-term note
 
 > **WPF is a temporary MVP technology.**
 >
@@ -272,12 +294,12 @@ This ensures **AutoFactoryScope is future-proof**.
 ### Phase 1 (Current)
 
 -   Full ONNX inference backend\
--   MVP WPF client\
+-   TypeScript/React web frontend\
 -   Initial CI
 
 ### Phase 2
 
--   Web dashboard replacement for WPF\
+-   Enhanced web dashboard features\
 -   Multi-layout analysis\
 -   Automatic report generation
 

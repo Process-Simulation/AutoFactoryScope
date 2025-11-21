@@ -35,7 +35,8 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 
 ### Completed
 
-- WPF application structure
+- TypeScript/React application structure
+- Vite build configuration
 - Image upload functionality
 - HTTP client integration with backend
 - Result display (annotated image, statistics)
@@ -45,6 +46,7 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 - UI/UX improvements
 - Error handling and user feedback
 - Backend URL configuration
+- Component architecture
 
 ### Next Tasks
 
@@ -52,7 +54,8 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 - Progress indicators for long-running requests
 - Export functionality (save annotated images)
 - Settings/configuration UI
-- Prepare for web dashboard migration (Phase 2)
+- Enhanced visualization features
+- Responsive design improvements
 
 ---
 
@@ -85,7 +88,7 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 
 - GitHub Actions workflow structure
 - Backend CI workflow (Python 3.11, pytest)
-- Frontend CI workflow (.NET 8, Windows build)
+- Frontend CI workflow (Node.js, TypeScript/React build)
 
 ### In Progress
 

@@ -52,29 +52,36 @@ Write-Host ""
 Write-Host "========================================="
 Write-Host "Frontend Build"
 Write-Host "========================================="
-$FrontendDir = Join-Path $RepoRoot "src\frontend\AutoFactoryScope.Desktop"
+$FrontendDir = Join-Path $RepoRoot "src\frontend\autofactoryscope-web"
 if (Test-Path $FrontendDir) {
     Set-Location $FrontendDir
     
-    # Check for .NET SDK
-    $dotnetCmd = Get-Command dotnet -ErrorAction SilentlyContinue
-    if (-not $dotnetCmd) {
-        Write-Error ".NET SDK not found. Cannot build frontend."
+    # Check for Node.js
+    $nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+    if (-not $nodeCmd) {
+        Write-Error "Node.js not found. Cannot build frontend."
         $allPassed = $false
     } else {
-        Write-Host "Restoring dependencies..."
-        dotnet restore
-        if ($LASTEXITCODE -ne 0) {
-            Write-Error "Frontend restore failed"
+        # Check for npm
+        $npmCmd = Get-Command npm -ErrorAction SilentlyContinue
+        if (-not $npmCmd) {
+            Write-Error "npm not found. Cannot build frontend."
             $allPassed = $false
         } else {
-            Write-Host "Building frontend (Release configuration)..."
-            dotnet build --configuration Release
+            Write-Host "Installing dependencies..."
+            npm ci
             if ($LASTEXITCODE -ne 0) {
-                Write-Error "Frontend build failed"
+                Write-Error "Frontend dependency installation failed"
                 $allPassed = $false
             } else {
-                Write-Host "Frontend build passed!" -ForegroundColor Green
+                Write-Host "Building frontend..."
+                npm run build
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Error "Frontend build failed"
+                    $allPassed = $false
+                } else {
+                    Write-Host "Frontend build passed!" -ForegroundColor Green
+                }
             }
         }
     }

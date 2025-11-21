@@ -7,12 +7,12 @@ Thank you for your interest in contributing to AutoFactoryScope! This guide will
 Before contributing, ensure you have:
 
 - **Python 3.11** (for backend development)
-- **.NET 8 SDK** (for frontend development)
+- **Node.js 18+** and **npm** (or **yarn**/ **pnpm**) (for frontend development)
 - **Git** (for version control)
-- **Visual Studio 2022** or **Visual Studio Code** (for C# development)
+- **Visual Studio Code** or modern IDE (for TypeScript/React development)
 - Basic familiarity with:
   - Python and FastAPI
-  - C# and WPF (for frontend work)
+  - TypeScript and React (for frontend work)
   - Git and GitHub workflows
 
 ## Getting Started
@@ -45,13 +45,14 @@ pip install -r requirements.txt
 ### 3. Set Up Frontend
 
 ```bash
-cd src/frontend/AutoFactoryScope.Desktop
+cd src/frontend/autofactoryscope-web
 
-# Restore dependencies
-dotnet restore
-
-# Build
-dotnet build
+# Install dependencies
+npm install
+# or
+yarn install
+# or
+pnpm install
 ```
 
 ### 4. Run Locally
@@ -64,13 +65,17 @@ uvicorn autofactoryscope_api.main:app --reload --host 0.0.0.0 --port 8000
 
 **Frontend:**
 ```bash
-# From src/frontend/AutoFactoryScope.Desktop
-dotnet run
+# From src/frontend/autofactoryscope-web
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
 ```
 
 Or use the development scripts in `scripts/`:
 - `scripts/dev_backend.ps1` (Windows) or `scripts/dev_backend.sh` (Linux/macOS)
-- `scripts/dev_frontend.ps1` (Windows)
+- `scripts/dev_frontend.ps1` (Windows) or `scripts/dev_frontend.sh` (Linux/macOS)
 
 ## Development Workflow
 
@@ -116,9 +121,12 @@ pytest
 
 **Frontend:**
 ```bash
-cd src/frontend/AutoFactoryScope.Desktop
-dotnet test  # If tests exist
-dotnet build  # At minimum, ensure it builds
+cd src/frontend/autofactoryscope-web
+npm run build  # Ensure it builds
+npm test  # If tests exist
+# or
+yarn build
+yarn test
 ```
 
 Or use the validation script:
@@ -187,12 +195,13 @@ Once approved and merged:
 - Use guard clauses instead of deep nesting
 - Avoid `else` when early return is clearer
 
-### C# (Frontend)
+### TypeScript/React (Frontend)
 
-- Follow C# coding conventions
-- Use light MVVM pattern for WPF
+- Follow TypeScript best practices
+- Use functional components with hooks
 - Separate UI logic from service calls
-- Keep ViewModels focused and testable
+- Keep components focused and testable
+- Use TypeScript types for API responses
 
 ## Testing Guidelines
 

@@ -4,7 +4,7 @@ This document outlines the phased development plan for AutoFactoryScope, from MV
 
 ## Phase 1: MVP (Current)
 
-**Goal:** Working ONNX inference backend with WPF desktop client and basic CI/CD.
+**Goal:** Working ONNX inference backend with TypeScript/React web frontend and basic CI/CD.
 
 ### Milestones
 
@@ -13,7 +13,7 @@ This document outlines the phased development plan for AutoFactoryScope, from MV
 - [x] Image tiling and coordinate merging
 - [x] Non-Maximum Suppression (NMS) implementation
 - [x] Visualization and annotated image generation
-- [x] WPF desktop client with image upload
+- [x] TypeScript/React web frontend with image upload
 - [x] Basic CI workflows (backend tests, frontend build)
 - [ ] Backend unit tests and smoke tests
 - [ ] Documentation (architecture, contributing, branching)
@@ -21,7 +21,7 @@ This document outlines the phased development plan for AutoFactoryScope, from MV
 ### Key Deliverables
 
 - Functional robot detection API
-- WPF client that can upload images and display results
+- React web client that can upload images and display results
 - GitHub Actions CI for backend and frontend
 - Developer documentation and contribution guidelines
 
@@ -31,15 +31,16 @@ This document outlines the phased development plan for AutoFactoryScope, from MV
 
 ## Phase 2: Enhanced Client & Batch Processing
 
-**Goal:** Replace WPF with web dashboard, add batch processing, and improve reporting.
+**Goal:** Enhance web dashboard, add batch processing, and improve reporting.
 
 ### Milestones
 
-- [ ] Web dashboard (React, Blazor, or Vue)
-  - Image upload and drag-and-drop
-  - Real-time detection progress
-  - Interactive result visualization
+- [ ] Enhanced web dashboard features
+  - Improved image upload with drag-and-drop
+  - Real-time detection progress indicators
+  - Enhanced interactive result visualization
   - Export annotated images and reports
+  - Better error handling and user feedback
 - [ ] Batch processing endpoint
   - Accept multiple layout images
   - Process in parallel or queue
@@ -55,7 +56,7 @@ This document outlines the phased development plan for AutoFactoryScope, from MV
 
 ### Key Deliverables
 
-- Web-based dashboard replacing WPF
+- Enhanced web-based dashboard
 - Batch processing API
 - Automated report generation
 - Improved user experience and performance
