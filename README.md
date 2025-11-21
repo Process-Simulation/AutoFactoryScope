@@ -5,7 +5,7 @@ C# WPF Frontend + Python ONNX Inference Backend
 
 📌 Overview
 
-AutoFactoryScope is an end-to-end system designed to automatically detect industrial robots on large-scale factory layout images.
+AutoFactoryScope is an end-to-end system designed to automatically detect industrial robots on large-scale 2D factory layout images.
 
 It combines:
 
