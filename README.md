@@ -147,16 +147,37 @@ workflow.
 
 # 🐍 Backend Setup (Python / FastAPI)
 
+### Prerequisites
+
+- **Python 3.11** (recommended)
+- Virtual environment support (venv)
+
 ### Install dependencies
 
 ``` bash
 cd src/backend/autofactoryscope_api
+
+# Create virtual environment (if not exists)
+python -m venv .venv
+
+# Activate virtual environment
+# Windows:
+.venv\Scripts\activate
+# Linux/macOS:
+source .venv/bin/activate
+
+# Install dependencies
 pip install -r requirements.txt
 ```
+
+### Model file
+
+The ONNX model must be located at `models/robot_detector.onnx` (relative to repository root). The backend will load this model at startup. To upgrade the model, replace this file after retraining and exporting from your notebooks.
 
 ### Run API
 
 ``` bash
+# Ensure virtual environment is activated
 uvicorn autofactoryscope_api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -166,6 +187,31 @@ http://localhost:8000/docs
 ------------------------------------------------------------------------
 
 # 🖥️ Frontend Setup (C# WPF MVP)
+
+### Prerequisites
+
+- **.NET 8 SDK** or later
+- Visual Studio 2022 (recommended) or Visual Studio Code with C# extension
+- Windows (WPF is Windows-only)
+
+### Build and run
+
+``` bash
+cd src/frontend/AutoFactoryScope.Desktop
+
+# Restore dependencies
+dotnet restore
+
+# Build (Debug)
+dotnet build
+
+# Run
+dotnet run
+```
+
+### Backend URL configuration
+
+The WPF client must be configured to connect to the backend API. By default, it expects the backend at `http://localhost:8000`. Update the backend URL in the application configuration or service settings if your backend runs on a different host or port.
 
 ### Why WPF?
 
@@ -245,6 +291,6 @@ This ensures **AutoFactoryScope is future-proof**.
 
 # 📄 License
 
-MIT (or your selected license)
+MIT License - see [LICENSE](LICENSE) file for details.
 
 ------------------------------------------------------------------------

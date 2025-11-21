@@ -1,0 +1,41 @@
+name: Frontend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'src/frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'src/frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Restore dependencies
+      working-directory: src/frontend/AutoFactoryScope.Desktop
+      run: dotnet restore
+      
+    - name: Build
+      working-directory: src/frontend/AutoFactoryScope.Desktop
+      run: dotnet build --configuration Release --no-restore
+      
+    - name: Build output
+      if: success()
+      run: |
+        Write-Host "Build completed successfully"
+        Get-ChildItem -Path "src/frontend/AutoFactoryScope.Desktop" -Recurse -Filter "*.dll" | Select-Object -First 5 | ForEach-Object { Write-Host $_.FullName }
+
