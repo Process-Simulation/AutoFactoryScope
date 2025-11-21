@@ -30,7 +30,7 @@ workflow.
 
 # 🚀 System Architecture
 
-## High-Level Architecture Diagram (ASCII)
+## High-Level Architecture Diagram 
 
     ┌─────────────────────────┐
     │     Frontend (MVP)      │
@@ -64,7 +64,7 @@ workflow.
 
 ------------------------------------------------------------------------
 
-# 🏛️ Repository Structure (Auto‑Generated)
+# 🏛️ Repository Structure 
 
     AutoFactoryScope/
     ├─ README.md
