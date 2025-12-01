@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import { SimBridgePanel } from './components/SimBridgePanel'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
@@ -65,6 +66,8 @@ function App() {
       </header>
 
       <main className="app-main">
+        <SimBridgePanel />
+
         <form onSubmit={handleSubmit} className="upload-form">
           <div className="file-input-container">
             <label htmlFor="file-upload" className="file-label">

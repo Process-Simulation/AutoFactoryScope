@@ -1,0 +1,195 @@
+.simbridge-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+}
+
+.panel-header h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.connection-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.connection-badge.connected {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.connection-badge.disconnected {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.server-info {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 1.5rem;
+    text-align: right;
+}
+
+.panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.control-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.25rem;
+    border: 1px solid #e9ecef;
+}
+
+.control-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.control-card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    color: #444;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.input-group input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 0.95rem;
+}
+
+.input-group button {
+    padding: 0.5rem 1rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.input-group button:disabled {
+    background: #aab2bd;
+    cursor: not-allowed;
+}
+
+.button-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.button-group button {
+    flex: 1;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    color: white;
+    transition: transform 0.1s;
+}
+
+.button-group button:active {
+    transform: scale(0.98);
+}
+
+.btn-start { background: #28a745; }
+.btn-stop { background: #dc3545; }
+.btn-reset { background: #ffc107; color: #333 !important; }
+.btn-step { background: #17a2b8; }
+
+.button-group button:disabled {
+    background: #e9ecef;
+    color: #adb5bd !important;
+    cursor: not-allowed;
+}
+
+.state-display {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background: #e9ecef;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 600;
+    color: #495057;
+}
+
+.signals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.signal-item {
+    background: white;
+    padding: 0.75rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.signal-name {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.signal-value {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.logs-container {
+    background: #212529;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    padding: 1rem;
+    border-radius: 6px;
+    height: 150px;
+    overflow-y: auto;
+    font-size: 0.85rem;
+}
+
+.log-entry {
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.25rem;
+}
+
+.no-logs {
+    color: #666;
+    text-align: center;
+    padding-top: 2rem;
+}
