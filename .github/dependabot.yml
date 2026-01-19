@@ -1,0 +1,26 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/src/backend/autofactoryscope_api"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "npm"
+    directory: "/src/frontend/autofactoryscope-web"
+    schedule:
+      interval: "weekly"
+    groups:
+      dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 10
+    ignore:
+      - dependency-name: "react"
+        versions: ["19.x"] 
+      - dependency-name: "react-dom"
+        versions: ["19.x"]

@@ -1,318 +1,98 @@
 # 🏭 AutoFactoryScope
 
-**Intelligent Factory Layout Robot Detection System**\
-**TypeScript/React Web Frontend + Python ONNX Runtime Backend + YOLOv8**
+**Intelligent Factory Layout Robot Detection System**
+**TypeScript/React (Vite) + Python (FastAPI/ONNX)**
 
 ------------------------------------------------------------------------
 
 ## 🎯 Project Purpose
 
-**AutoFactoryScope** is a machine‑learning powered tool that
-automatically detects industrial robots in large‑scale factory layout
-drawings.\
-It is designed for manufacturing engineering, robotics planning, and
-digital factory teams who work with CAD-based 2D layout drawings
-(Body‑in‑White, Trim, Chassis, etc.)
+**AutoFactoryScope** applies computer vision to detect industrial robots in large-scale factory layout drawings.
+It uses a tiled inference approach to handle high-resolution CAD exports (50k+ pixels wide).
 
-The system brings together:
+## 🚀 Quick Start
 
--   🧠 **YOLOv8 object detection**
--   ⚡ **Optimized ONNX inference pipeline**
--   🐍 **Python backend (FastAPI)**
--   🌐 **TypeScript/React web frontend**
--   🔁 **Scalable, frontend-agnostic architecture**
+### Backend (Python 3.11+)
 
-This README documents the full architecture, setup, and development
-workflow.
-
-------------------------------------------------------------------------
-
-# 🚀 System Architecture
-
-## High-Level Architecture Diagram 
-
-    ┌─────────────────────────┐
-    │   Web Frontend (React)  │
-    │   TypeScript + Vite     │
-    │  - Image Upload         │
-    │  - Sends to API         │
-    │  - Shows annotated image│
-    │  - Interactive results  │
-    └───────────────┬─────────┘
-                    │ HTTP POST (multipart/form-data)
-                    ▼
-    ┌──────────────────────────────────────────┐
-    │        Python Inference Backend          │
-    │        FastAPI / ONNX Runtime            │
-    │------------------------------------------│
-    │ 1. Receive layout image                  │
-    │ 2. Preprocess + Tile into 512×512        │
-    │ 3. YOLOv8 ONNX Inference                 │
-    │ 4. Merge tile detections                 │
-    │ 5. Non-max suppression                   │
-    │ 6. Draw bounding boxes                   │
-    │ 7. Return JSON + Annotated image         │
-    └───────────────────┬──────────────────────┘
-                        │
-                        ▼
-    ┌──────────────────────────────────────────┐
-    │          Output to User (Web)            │
-    │  - Robot count                           │
-    │  - Bounding box overlays                 │
-    │  - Exported annotated layout             │
-    └──────────────────────────────────────────┘
-
-------------------------------------------------------------------------
-
-# 🏛️ Repository Structure 
-
-    AutoFactoryScope/
-    ├─ README.md
-    ├─ LICENSE
-    ├─ .gitignore
-    ├─ .gitattributes
-    ├─ .editorconfig
-    │
-    ├─ .github/
-    │  ├─ workflows/
-    │  │  ├─ backend-ci.yml
-    │  │  └─ frontend-ci.yml
-    │  └─ ISSUE_TEMPLATE/
-    │     ├─ bug_report.md
-    │     └─ feature_request.md
-    │
-    ├─ models/
-    │  ├─ robot_detector.onnx
-    │  └─ label_map.json
-    │
-    ├─ notebooks/
-    │  ├─ 01_eda.ipynb
-    │  ├─ 02_training_experiments.ipynb
-    │  └─ 03_inference_tests.ipynb
-    │
-    ├─ data/
-    │  ├─ samples/
-    │  │  ├─ layout_example_1.png
-    │  │  └─ layout_example_2.png
-    │  └─ README.md
-    │
-    ├─ src/
-    │  ├─ backend/
-    │  │  └─ autofactoryscope_api/
-    │  │     ├─ main.py
-    │  │     ├─ inference.py
-    │  │     ├─ tiling.py
-    │  │     ├─ postprocess.py
-    │  │     ├─ visualize.py
-    │  │     ├─ config.py
-    │  │     └─ requirements.txt
-    │  │
-    │  └─ frontend/
-    │     └─ autofactoryscope-web/
-    │        ├─ src/
-    │        ├─ public/
-    │        ├─ package.json
-    │        ├─ tsconfig.json
-    │        ├─ vite.config.ts
-    │        └─ index.html
-    │
-    └─ scripts/
-       ├─ run_backend_dev.sh
-       ├─ run_backend_dev.bat
-       └─ export_model_notes.md
-
-------------------------------------------------------------------------
-
-# 🧠 ML Pipeline Summary
-
-### Dataset
-
--   High‑resolution factory layouts\
--   Split into overlapping 512×512 tiles\
--   Annotated in Roboflow\
--   Custom deterministic splitter for consistent train/val/test sets
-
-### Model
-
--   YOLOv8\
--   Tuned using `model.tune()`\
--   Exported to ONNX for inference speed
-
-### Inference
-
--   Tiled prediction\
--   Post-merge of detections to global coordinates\
--   Final annotated image produced
-
-------------------------------------------------------------------------
-
-# 🐍 Backend Setup (Python / FastAPI)
-
-### Prerequisites
-
-- **Python 3.11** (recommended)
-- Virtual environment support (venv)
-
-### Install dependencies
-
-``` bash
+```bash
 cd src/backend/autofactoryscope_api
-
-# Create virtual environment (if not exists)
-python -m venv .venv
-
-# Activate virtual environment
-# Windows:
-.venv\Scripts\activate
-# Linux/macOS:
-source .venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Run server (logs to console in dev mode)
+uvicorn autofactoryscope_api.main:app --reload
 ```
 
-### Model file
+- API Docs: http://localhost:8000/docs
+- Metrics: http://localhost:8000/metrics
+- Health: http://localhost:8000/health
 
-The ONNX model must be located at `models/robot_detector.onnx` (relative to repository root). The backend will load this model at startup. To upgrade the model, replace this file after retraining and exporting from your notebooks.
+### Frontend (Node.js 20+)
 
-### Run API
-
-``` bash
-# Ensure virtual environment is activated
-uvicorn autofactoryscope_api.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-Open API docs at:\
-http://localhost:8000/docs
-
-------------------------------------------------------------------------
-
-# 🌐 Frontend Setup (TypeScript/React)
-
-### Prerequisites
-
-- **Node.js 18+** and **npm** (or **yarn**/ **pnpm**)
-- Modern web browser
-
-### Install dependencies
-
-``` bash
+```bash
 cd src/frontend/autofactoryscope-web
 
-# Install dependencies
+# Install dependencies (updated to React 19 + Vite 6)
 npm install
-# or
-yarn install
-# or
-pnpm install
-```
 
-### Development server
-
-``` bash
-# Start development server
+# Run dev server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-The frontend will be available at `http://localhost:5173` (or the next available port).
+- App: http://localhost:5173
 
-### Build for production
+------------------------------------------------------------------------
 
-``` bash
-# Build for production
-npm run build
-# or
-yarn build
-# or
-pnpm build
+## 🧪 Testing
+
+### Backend Tests
+
+We use `pytest` with 80% coverage enforcement.
+
+```bash
+cd src/backend/autofactoryscope_api
+pytest --cov=autofactoryscope_api --cov-report=term-missing
 ```
 
-### Backend URL configuration
+### Frontend Tests
 
-The frontend is configured to connect to the backend API at `http://localhost:8000` by default. Update the `VITE_API_URL` environment variable or configuration file if your backend runs on a different host or port.
+We use `vitest` + `testing-library`.
 
-### Technology Stack
-
-- **React 18+** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool and dev server
-- **Modern ES6+** - JavaScript features
-
-
-> **WPF is a temporary MVP technology.**
->
-> The architecture has been intentionally designed so the frontend can
-> later be replaced with: - A web dashboard (React, Blazor, Vue) -
-> Electron or MAUI - Integration into existing factory engineering tools
-
-This ensures **AutoFactoryScope is future-proof**.
+```bash
+cd src/frontend/autofactoryscope-web
+npm run test           # Watch mode
+npm run test:coverage  # Coverage report
+```
 
 ------------------------------------------------------------------------
 
-# 🔁 Branching Strategy
+## 🏗️ Architecture
 
-    main       – production-ready
-    develop    – integration branch
-    feature/*  – per-task development
-    hotfix/*   – urgent fixes into main
+### Backend (Production Ready)
+- **Framework**: FastAPI
+- **Inference**: ONNX Runtime (YOLOv8)
+- **Tiling**: Custom sliding window with 50% overlap support
+- **Post-processing**: Global coordinate merge + NMS
+- **Observability**: Structlog (JSON), Prometheus metrics, Request IDs
+- **Resilience**: Rate limiting (slowapi), Global error handling
 
-### Rules
-
--   **No direct commits to `main`**
--   All work flows through PRs → `develop` → `main`
--   Squash merges recommended
--   Feature branches named as:
-    -   `feature/tiling-optimization`
-    -   `feature/wpf-ui-upload`
-    -   `feature/backend-nms`
-
-------------------------------------------------------------------------
-
-# 🔒 Security & DevOps Notes
-
-### Recommended GitHub configuration
-
--   Protect `main`
--   Require PR review
--   Require CI checks once implemented
--   Restrict deletions & force pushes
-
-### CI (planned)
-
--   Backend unit tests (pytest)
--   ONNX inference smoke test
--   Frontend build validation
+### Frontend (Modernized)
+- **Core**: React 19, TypeScript 5.9
+- **Build**: Vite 6
+- **Styling**: TailwindCSS 3.4
+- **State**: Zustand
+- **Testing**: Vitest
 
 ------------------------------------------------------------------------
 
-# 🗺️ Roadmap
+## 🔌 API Summary
 
-### Phase 1 (Current)
+| Method | Endpoint | Description |
+|:---|:---|:---|
+| `POST` | `/detect` | Upload image, returns robot count + annotations |
+| `GET` | `/health` | System health, model status, uptime |
+| `GET` | `/metrics` | Prometheus metrics scrape target |
 
--   Full ONNX inference backend\
--   TypeScript/React web frontend\
--   Initial CI
-
-### Phase 2
-
--   Enhanced web dashboard features\
--   Multi-layout analysis\
--   Automatic report generation
-
-### Phase 3
-
--   Robot type classification\
--   Symbol clustering\
--   Scalability for enterprise datasets
-
-------------------------------------------------------------------------
-
-# 📄 License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
-------------------------------------------------------------------------
+---
+*Created by GeorgeM*

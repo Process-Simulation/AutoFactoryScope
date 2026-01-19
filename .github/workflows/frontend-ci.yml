@@ -13,7 +13,7 @@ on:
       - '.github/workflows/frontend-ci.yml'
 
 jobs:
-  build:
+  test-and-build:
     runs-on: ubuntu-latest
     
     steps:
@@ -23,7 +23,7 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '18'
+        node-version: '20'
         cache: 'npm'
         cache-dependency-path: src/frontend/autofactoryscope-web/package-lock.json
         
@@ -31,22 +31,23 @@ jobs:
       working-directory: src/frontend/autofactoryscope-web
       run: npm ci
       
-    - name: Lint (if configured)
+    - name: Lint
       working-directory: src/frontend/autofactoryscope-web
-      run: npm run lint || echo "Lint script not configured, skipping"
-      continue-on-error: true
+      run: npm run lint
       
     - name: Type check
       working-directory: src/frontend/autofactoryscope-web
-      run: npm run type-check || npx tsc --noEmit || echo "Type check script not configured, skipping"
-      continue-on-error: true
+      run: npm run type-check
+      
+    - name: Run tests with coverage
+      working-directory: src/frontend/autofactoryscope-web
+      run: npm run test:coverage
       
     - name: Build
       working-directory: src/frontend/autofactoryscope-web
       run: npm run build
       
-    - name: Build output
+    - name: Build output verification
       if: success()
       run: |
-        echo "Build completed successfully"
-        ls -la src/frontend/autofactoryscope-web/dist/ | head -10 || echo "No dist directory found"
+        ls -la src/frontend/autofactoryscope-web/dist/

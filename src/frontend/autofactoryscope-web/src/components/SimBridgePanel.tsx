@@ -2,7 +2,11 @@ import { useState } from 'react';
 import { useSimBridge } from '../hooks/useSimBridge';
 import './SimBridgePanel.css';
 
-export function SimBridgePanel() {
+interface SimBridgePanelProps {
+    onLayoutCaptured?: (file: File) => void;
+}
+
+export function SimBridgePanel({ onLayoutCaptured }: SimBridgePanelProps) {
     const { status, client } = useSimBridge();
     const [studyPath, setStudyPath] = useState('C:\\Studies\\Sample.cojt');
     const [signalNames, setSignalNames] = useState('conveyor_speed, robot_status, cycle_time');
@@ -50,6 +54,24 @@ export function SimBridgePanel() {
         }
     };
 
+    const handleCapture = async () => {
+        setLoading(true);
+        addLog('Requesting layout capture from SimBridge...');
+        try {
+            const result = await client.captureLayout();
+            if (result.success && onLayoutCaptured) {
+                const filename = `layout_capture_${new Date().getTime()}.png`;
+                const file = new File([result.imageBlob], filename, { type: 'image/png' });
+                addLog(`Capture successful: ${filename}`);
+                onLayoutCaptured(file);
+            }
+        } catch (error) {
+            addLog(`Error capturing layout: ${error}`);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="simbridge-panel">
             <div className="panel-header">
@@ -89,6 +111,23 @@ export function SimBridgePanel() {
                         <button className="btn-step" onClick={() => handleSimControl('STEP_FORWARD')} disabled={!status.connected}>Step</button>
                     </div>
                     {simState && <div className="state-display">State: {simState}</div>}
+                </div>
+
+                {/* Workflow Automation Control */}
+                <div className="control-card full-width highlight-card">
+                    <h3>⚡ Automated Workflow</h3>
+                    <div className="automation-controls">
+                        <p className="description">
+                            Directly acquire layout from loaded simulation and run detection.
+                        </p>
+                        <button
+                            className="btn-capture"
+                            onClick={handleCapture}
+                            disabled={!status.connected || loading}
+                        >
+                            📸 Capture & Detect
+                        </button>
+                    </div>
                 </div>
 
                 {/* Signal Monitoring */}
