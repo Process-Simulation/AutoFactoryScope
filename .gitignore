@@ -78,3 +78,14 @@ logs/
 
 # Gemini/Agent artifacts
 .gemini/
+
+# ML Datasets & Models (PRIVACY: DO NOT COMMIT)
+datasets/
+backups/
+*.onnx
+*.pt
+*.pth
+*.weights
+*.engine
+data.yaml
+!models/.gitkeep

@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell.exe:*)",
+      "Bash(python -c \"import sys; sys.path.insert\\(0, ''.''\\); from autofactoryscope_api.pdf_utils import is_pdf, pdf_to_images; print\\(''PDF utils imported successfully''\\)\")",
+      "Bash(.venv/Scripts/python.exe:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(python analyze_detections.py:*)",
+      "Bash(python test_annotated.py:*)",
+      "Bash(python test_thresholds.py:*)"
+    ]
+  }
+}

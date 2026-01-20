@@ -32,8 +32,8 @@ class Settings(BaseSettings):
     model_path: Path = Path("models/robot_detector.onnx")
     tile_size: int = 512
     tile_overlap: float = 0.1
-    confidence_threshold: float = 0.27  # Tuned for 23 floor robots (excludes track robot)
-    nms_iou_threshold: float = 0.40  # Reduced from 0.5 to avoid merging close robots
+    confidence_threshold: float = 0.20  # Cole's YOLOv8s model - filters false positives (targeting 23 detections)
+    nms_iou_threshold: float = 0.15  # Balanced - merges tile duplicates but keeps close robots separate
 
     # Rate Limiting
     rate_limit_enabled: bool = True
@@ -62,4 +62,9 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     """Get cached settings instance."""
+    return Settings()
+
+
+def get_settings_no_cache() -> Settings:
+    """Get settings without caching - useful for development/testing."""
     return Settings()
