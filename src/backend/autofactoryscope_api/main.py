@@ -22,6 +22,7 @@ from .config import get_settings
 from .inference import get_model, load_model
 from .logging_config import get_logger, setup_logging
 from .middleware import limiter, setup_middleware
+from .pdf_utils import is_pdf, pdf_to_images, validate_pdf_size
 from .postprocess import nms
 from .schemas import DetectionItem, DetectionResponse, ErrorDetail, ErrorResponse, HealthResponse
 from .tiling import tile_image
@@ -159,20 +160,21 @@ async def metrics() -> Response:
 @limiter.limit("30/minute")
 async def detect_robots(
     request: Request,
-    file: Annotated[UploadFile, File(description="Factory layout image")],
+    file: Annotated[UploadFile, File(description="Factory layout image (PNG, JPEG, PDF)")],
     include_annotated: bool = True,
 ) -> DetectionResponse:
     """
-    Detect robots in a factory layout image.
+    Detect robots in a factory layout image or PDF.
 
-    Processes the uploaded image through the YOLOv8 detection pipeline:
-    1. Tiles the image into overlapping 512x512 regions
-    2. Runs inference on each tile
-    3. Merges detections and applies NMS
-    4. Returns detection results and optionally an annotated image
+    Processes the uploaded file through the YOLOv8 detection pipeline:
+    1. If PDF: converts each page to an image (max 10 pages)
+    2. Tiles the image(s) into overlapping 512x512 regions
+    3. Runs inference on each tile
+    4. Merges detections and applies NMS
+    5. Returns detection results and optionally an annotated image
 
     Args:
-        file: The factory layout image (PNG, JPEG, etc.)
+        file: The factory layout image (PNG, JPEG, etc.) or PDF
         include_annotated: Whether to include base64-encoded annotated image
 
     Returns:
@@ -185,21 +187,7 @@ async def detect_robots(
     REQUEST_COUNT.labels(method="POST", endpoint="/detect", status="started").inc()
 
     try:
-        # Validate file type
-        if not file.content_type or not file.content_type.startswith("image/"):
-            return JSONResponse(
-                status_code=400,
-                content=ErrorResponse(
-                    request_id=request_id,
-                    error=ErrorDetail(
-                        code="INVALID_FILE_TYPE",
-                        message=f"Expected image file, got {file.content_type}",
-                        field="file",
-                    ),
-                ).model_dump(mode="json"),
-            )
-
-        # Read and decode image
+        # Read file contents
         contents = await file.read()
         if len(contents) == 0:
             return JSONResponse(
@@ -214,29 +202,81 @@ async def detect_robots(
                 ).model_dump(mode="json"),
             )
 
-        try:
-            from io import BytesIO
+        # Check if PDF
+        if is_pdf(file.content_type, file.filename):
+            logger.info("processing_pdf_upload", filename=file.filename, size=len(contents))
 
-            image = Image.open(BytesIO(contents))
-            image_array = np.array(image)
-        except Exception as e:
+            try:
+                # Validate PDF size
+                validate_pdf_size(contents, max_pages=10)
+
+                # Convert PDF pages to images
+                images = pdf_to_images(contents, dpi=300)
+
+                # For now, process only the first page
+                # TODO: Add support for multi-page detection results
+                if len(images) == 0:
+                    raise ValueError("PDF conversion produced no images")
+
+                image_array = images[0]
+                image = Image.fromarray(image_array)  # Create PIL Image for annotation
+                logger.info("using_first_pdf_page", total_pages=len(images))
+
+            except Exception as e:
+                return JSONResponse(
+                    status_code=400,
+                    content=ErrorResponse(
+                        request_id=request_id,
+                        error=ErrorDetail(
+                            code="INVALID_PDF",
+                            message=f"Could not process PDF: {e}",
+                            field="file",
+                        ),
+                    ).model_dump(mode="json"),
+                )
+
+        # Validate file type (must be image if not PDF)
+        elif not file.content_type or not file.content_type.startswith("image/"):
             return JSONResponse(
                 status_code=400,
                 content=ErrorResponse(
                     request_id=request_id,
                     error=ErrorDetail(
-                        code="INVALID_IMAGE",
-                        message=f"Could not decode image: {e}",
+                        code="INVALID_FILE_TYPE",
+                        message=f"Expected image or PDF file, got {file.content_type}",
                         field="file",
                     ),
                 ).model_dump(mode="json"),
             )
 
+        # Decode regular image
+        else:
+            try:
+                from io import BytesIO
+
+                image = Image.open(BytesIO(contents))
+                image_array = np.array(image)
+            except Exception as e:
+                return JSONResponse(
+                    status_code=400,
+                    content=ErrorResponse(
+                        request_id=request_id,
+                        error=ErrorDetail(
+                            code="INVALID_IMAGE",
+                            message=f"Could not decode image: {e}",
+                            field="file",
+                        ),
+                    ).model_dump(mode="json"),
+                )
+
+        # Get image dimensions from array
+        height, width = image_array.shape[:2]
+
         logger.info(
             "processing_image",
             filename=file.filename,
             size=len(contents),
-            dimensions=f"{image.width}x{image.height}",
+            dimensions=f"{width}x{height}",
         )
 
         # Get model
