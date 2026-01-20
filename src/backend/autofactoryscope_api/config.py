@@ -32,8 +32,8 @@ class Settings(BaseSettings):
     model_path: Path = Path("models/robot_detector.onnx")
     tile_size: int = 512
     tile_overlap: float = 0.1
-    confidence_threshold: float = 0.25
-    nms_iou_threshold: float = 0.5
+    confidence_threshold: float = 0.27  # Tuned for 23 floor robots (excludes track robot)
+    nms_iou_threshold: float = 0.40  # Reduced from 0.5 to avoid merging close robots
 
     # Rate Limiting
     rate_limit_enabled: bool = True
