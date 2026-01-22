@@ -156,19 +156,19 @@ workflow.
 ### Install dependencies
 
 ``` bash
-cd src/backend/autofactoryscope_api
+cd src/backend
 
-# Create virtual environment (if not exists)
-python -m venv .venv
+# Create virtual environment if needed
+python -m venv autofactoryscope_api/.venv
 
 # Activate virtual environment
 # Windows:
-.venv\Scripts\activate
+autofactoryscope_api\.venv\Scripts\activate
 # Linux/macOS:
-source .venv/bin/activate
+source autofactoryscope_api/.venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r autofactoryscope_api/requirements.txt
 ```
 
 ### Model file
@@ -178,7 +178,7 @@ The ONNX model must be located at `models/robot_detector.onnx` (relative to repo
 ### Run API
 
 ``` bash
-# Ensure virtual environment is activated
+# Run from src/backend to support absolute imports
 uvicorn autofactoryscope_api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
