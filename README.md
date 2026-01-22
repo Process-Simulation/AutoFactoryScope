@@ -46,7 +46,7 @@ workflow.
     │        FastAPI / ONNX Runtime            │
     │------------------------------------------│
     │ 1. Receive layout image                  │
-    │ 2. Preprocess + Tile into 512×512        │
+    │ 2. Preprocess + Tile into 640×640        │
     │ 3. YOLOv8 ONNX Inference                 │
     │ 4. Merge tile detections                 │
     │ 5. Non-max suppression                   │

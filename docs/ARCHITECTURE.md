@@ -12,7 +12,7 @@ The backend is the core inference engine that processes factory layout images an
 
 - **`main.py`**: FastAPI application entry point, defines HTTP endpoints
 - **`config.py`**: Configuration management (model paths, tile size, NMS parameters)
-- **`tiling.py`**: Image tiling logic - splits large layouts into 512×512 overlapping tiles
+- **`tiling.py`**: Image tiling logic - splits large layouts into 640×640 overlapping tiles
 - **`inference.py`**: ONNX Runtime integration, loads YOLOv8 model, runs inference on tiles
 - **`postprocess.py`**: Merges tile detections to global coordinates, applies Non-Maximum Suppression (NMS)
 - **`visualize.py`**: Draws bounding boxes on original image, generates annotated output
@@ -47,7 +47,19 @@ The frontend sends a POST request to `/detect` (or similar endpoint) with:
 - `multipart/form-data` containing the layout image file
 - Optional parameters (confidence threshold, NMS IoU threshold)
 
-### 2. Preprocessing & Tiling
+### 2. PDF Conversion (if applicable)
+
+If the uploaded file is a PDF:
+- Validate PDF format and file size
+- Extract specified page (default: first page)
+- Render page to PIL Image at configured DPI (default: 300)
+- Pass image to preprocessing pipeline
+
+If the uploaded file is an image:
+- Load image directly to PIL Image
+- Skip to preprocessing
+
+### 3. Preprocessing & Tiling
 
 The backend:
 - Loads the image into memory
@@ -55,27 +67,27 @@ The backend:
 - Tiles the image into 512×512 regions with configurable overlap
 - Maintains tile-to-global coordinate mapping
 
-### 3. ONNX Inference
+### 4. ONNX Inference
 
 For each tile:
 - Preprocesses tile to model input format (normalization, resizing if needed)
 - Runs YOLOv8 ONNX inference
 - Extracts bounding boxes, confidence scores, and class predictions
 
-### 4. Post-Processing
+### 5. Post-Processing
 
 - Merges detections from all tiles back to global layout coordinates
 - Applies Non-Maximum Suppression (NMS) to remove duplicate detections
 - Filters by confidence threshold
 - Counts total robots detected
 
-### 5. Visualization
+### 6. Visualization
 
 - Draws bounding boxes on the original image
 - Optionally labels boxes with confidence scores
 - Generates annotated image (PNG/JPEG)
 
-### 6. Response
+### 7. Response
 
 Returns JSON response containing:
 - `robot_count`: Total number of robots detected
