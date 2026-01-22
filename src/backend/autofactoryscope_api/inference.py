@@ -8,5 +8,5 @@ def load_model(model_path: str):
     pass
 
 def run_inference(model, image_tile):
-    """Runs inference on a single 640x640 tile."""
+    """Runs inference on a single 512x512 tile."""
     pass

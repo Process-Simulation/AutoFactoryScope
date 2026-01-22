@@ -7,7 +7,7 @@ To export the YOLOv8 model to ONNX format:
 from ultralytics import YOLO
 
 model = YOLO("path/to/best.pt")
-model.export(format="onnx", imgsz=640, dynamic=True)
+model.export(format="onnx", imgsz=512, dynamic=True)
 ```
 
 ## Optimization
