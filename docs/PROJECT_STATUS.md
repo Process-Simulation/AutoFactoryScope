@@ -27,7 +27,7 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 - ONNX inference smoke tests
 - API endpoint validation
 - Performance profiling and optimization
-- Environment variable configuration support
+- Environment variable configuration support (via pydantic-settings)
 - Logging improvements
 
 ---
@@ -41,22 +41,22 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 - Image upload functionality
 - HTTP client integration with backend
 - Result display (annotated image, statistics)
+- Backend URL configuration
+- Export functionality (save annotated images)
+- Responsive design improvements (basic wrap/scaling)
 
 ### In Progress
 
 - UI/UX improvements
 - Error handling and user feedback
-- Backend URL configuration
 - Component architecture
 
 ### Next Tasks
 
 - Input validation and error messages
 - Progress indicators for long-running requests
-- Export functionality (save annotated images)
 - Settings/configuration UI
-- Enhanced visualization features
-- Responsive design improvements
+- Enhanced visualization features (zoom/pan)
 
 ---
 
@@ -134,7 +134,7 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 
 ## Notes
 
-- **Last Updated**: 2026-01-22
+- **Last Updated**: 2026-01-22 (Finalized MVP Frontend)
 - **Current Phase**: Phase 1 (MVP)
 - **Next Milestone**: Complete backend tests and CI validation
 

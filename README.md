@@ -37,6 +37,7 @@ workflow.
     │  - Image Upload         │
     │  - Sends to API         │
     │  - Shows annotated image│
+    │  - Download result (PNG)│
     │  - Interactive results  │
     └───────────────┬─────────┘
                     │ HTTP POST (multipart/form-data)
@@ -59,7 +60,8 @@ workflow.
     │          Output to User (Web)            │
     │  - Robot count                           │
     │  - Bounding box overlays                 │
-    │  - Exported annotated layout             │
+    │  - Exported annotated layout (PNG)       │
+    │  - Image Dimension Display               │
     └──────────────────────────────────────────┘
 
 ------------------------------------------------------------------------

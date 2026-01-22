@@ -24,6 +24,7 @@ The React web application provides:
 - Image upload interface with drag-and-drop support
 - HTTP client (fetch/axios) to communicate with backend API
 - Interactive display of detection results (counts, bounding boxes, annotated image)
+- Download of annotated image results as PNG
 - Real-time progress indicators
 - Responsive design for various screen sizes
 

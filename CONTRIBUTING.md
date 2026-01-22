@@ -27,19 +27,19 @@ cd AutoFactoryScope
 ### 2. Set Up Backend
 
 ```bash
-cd src/backend/autofactoryscope_api
+cd src/backend
 
 # Create virtual environment
-python -m venv .venv
+python -m venv autofactoryscope_api/.venv
 
 # Activate virtual environment
 # Windows:
-.venv\Scripts\activate
+autofactoryscope_api\.venv\Scripts\activate
 # Linux/macOS:
-source .venv/bin/activate
+source autofactoryscope_api/.venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r autofactoryscope_api/requirements.txt
 ```
 
 ### 3. Set Up Frontend
@@ -59,7 +59,7 @@ pnpm install
 
 **Backend:**
 ```bash
-# From src/backend/autofactoryscope_api
+# From src/backend
 uvicorn autofactoryscope_api.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -115,7 +115,7 @@ git checkout -b feature/your-feature-name
 
 **Backend:**
 ```bash
-cd src/backend/autofactoryscope_api
+cd src/backend
 pytest
 ```
 

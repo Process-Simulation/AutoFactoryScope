@@ -39,13 +39,13 @@ This document outlines the phased development plan for AutoFactoryScope, from MV
   - Improved image upload with drag-and-drop
   - Real-time detection progress indicators
   - Enhanced interactive result visualization
-  - Export annotated images and reports
+  - [x] Export annotated images (PNG)
   - Better error handling and user feedback
 - [ ] Batch processing endpoint
   - Accept multiple layout images
   - Process in parallel or queue
   - Return aggregated statistics
-- [ ] Report generation
+- [ ] Automated Report generation
   - PDF reports with detection summaries
   - CSV export of detection data
   - Comparison reports for multiple layouts
