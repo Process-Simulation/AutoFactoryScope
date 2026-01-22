@@ -12,7 +12,7 @@ The backend is the core inference engine that processes factory layout images an
 
 - **`main.py`**: FastAPI application entry point, defines HTTP endpoints
 - **`config.py`**: Configuration management (model paths, tile size, NMS parameters)
-- **`tiling.py`**: Image tiling logic - splits large layouts into 640×640 overlapping tiles
+- **`tiling.py`**: Image tiling logic - splits large layouts into configurable overlapping tiles (e.g., 512×512)
 - **`inference.py`**: ONNX Runtime integration, loads YOLOv8 model, runs inference on tiles
 - **`postprocess.py`**: Merges tile detections to global coordinates, applies Non-Maximum Suppression (NMS)
 - **`visualize.py`**: Draws bounding boxes on original image, generates annotated output
@@ -64,7 +64,7 @@ If the uploaded file is an image:
 The backend:
 - Loads the image into memory
 - Validates image format and dimensions
-- Tiles the image into 512×512 regions with configurable overlap
+- Tiles the image into regions (default 512×512) with configurable overlap
 - Maintains tile-to-global coordinate mapping
 
 ### 4. ONNX Inference
@@ -174,9 +174,9 @@ Backend configuration (via `config.py` or environment variables):
 - Model path: `MODEL_PATH` (default: `models/robot_detector.onnx`)
 - Tile size: `TILE_SIZE` (default: 512)
 - Tile overlap: `TILE_OVERLAP` (default: 0.1)
-- NMS IoU threshold: `NMS_IOU_THRESHOLD` (default: 0.5)
-- Confidence threshold: `CONFIDENCE_THRESHOLD` (default: 0.25)
-- Logging level: `LOG_LEVEL` (default: INFO)
+- IoU threshold: `IOU_THRESHOLD` (default: 0.45)
+- Confidence threshold: `CONFIDENCE_THRESHOLD` (default: 0.5)
+- PDF DPI: `PDF_DPI` (default: 300)
 
 ## Scalability Considerations
 

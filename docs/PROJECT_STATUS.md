@@ -13,6 +13,7 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 - Post-processing (coordinate merging, NMS)
 - Visualization module
 - Configuration management
+- PDF document support (via PyMuPDF)
 
 ### In Progress
 
@@ -133,7 +134,7 @@ This is a living document that tracks the current state of AutoFactoryScope deve
 
 ## Notes
 
-- **Last Updated**: [Update this date when modifying]
+- **Last Updated**: 2026-01-22
 - **Current Phase**: Phase 1 (MVP)
 - **Next Milestone**: Complete backend tests and CI validation
 

@@ -243,13 +243,12 @@ The frontend is configured to connect to the backend API at `http://localhost:80
 - **Modern ES6+** - JavaScript features
 
 
-> **WPF is a temporary MVP technology.**
->
-> The architecture has been intentionally designed so the frontend can
-> later be replaced with: - A web dashboard (React, Blazor, Vue) -
-> Electron or MAUI - Integration into existing factory engineering tools
+### Supported Formats
 
-This ensures **AutoFactoryScope is future-proof**.
+- **Images**: PNG, JPEG, TIFF (standard formats supported by PIL)
+- **Documents**: PDF (via PyMuPDF integration)
+
+This ensures **AutoFactoryScope is future-proof and flexible**.
 
 ------------------------------------------------------------------------
 

@@ -16,7 +16,7 @@ This document outlines the phased development plan for AutoFactoryScope, from MV
 - [x] TypeScript/React web frontend with image upload
 - [x] Basic CI workflows (backend tests, frontend build)
 - [ ] Backend unit tests and smoke tests
-- [ ] Documentation (architecture, contributing, branching)
+- [x] Documentation (architecture, contributing, branching)
 
 ### Key Deliverables
 
