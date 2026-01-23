@@ -34,8 +34,9 @@ workflow.
     ┌─────────────────────────┐
     │   Web Frontend (React)  │
     │   TypeScript + Vite     │
-    │  - Image Upload         │
-    │  - Sends to API         │
+    │  - Image/PDF Upload     │
+    │  - Preview + Crop Select│
+    │  - Sends file + crop    │
     │  - Shows annotated image│
     │  - Download result (PNG)│
     │  - Interactive results  │
@@ -46,13 +47,15 @@ workflow.
     │        Python Inference Backend          │
     │        FastAPI / ONNX Runtime            │
     │------------------------------------------│
-    │ 1. Receive layout image                  │
-    │ 2. Preprocess + Tile into 640×640        │
-    │ 3. YOLOv8 ONNX Inference                 │
-    │ 4. Merge tile detections                 │
-    │ 5. Non-max suppression                   │
-    │ 6. Draw bounding boxes                   │
-    │ 7. Return JSON + Annotated image         │
+    │ 1. Receive layout image/PDF              │
+    │ 2. Render PDF to image (page 1)          │
+    │ 3. Apply user crop (normalized coords)   │
+    │ 4. Preprocess + Tile into 512×512        │
+    │ 5. YOLOv8 ONNX Inference                 │
+    │ 6. Merge tile detections                 │
+    │ 7. Non-max suppression                   │
+    │ 8. Draw bounding boxes                   │
+    │ 9. Return JSON + Annotated image         │
     └───────────────────┬──────────────────────┘
                         │
                         ▼
@@ -142,6 +145,7 @@ workflow.
 
 ### Inference
 
+-   Manual crop applied before tiling (when provided)\
 -   Tiled prediction\
 -   Post-merge of detections to global coordinates\
 -   Final annotated image produced
@@ -186,6 +190,22 @@ uvicorn autofactoryscope_api.main:app --reload --host 0.0.0.0 --port 8000
 
 Open API docs at:\
 http://localhost:8000/docs
+
+### Manual crop API
+
+The backend exposes a preview endpoint for rendering PDFs/images and a crop-enabled detect endpoint.
+
+`POST /preview` (multipart/form-data)
+- Body: `file` (image or PDF)
+- Response: `image_base64`, `image_width`, `image_height`
+
+`POST /detect` (multipart/form-data)
+- Body: `file` (image or PDF)
+- Body: `crop` (JSON string with normalized `x`, `y`, `width`, `height`)
+- If `crop` is provided, PDF auto-crop is skipped.
+
+PDF rendering uses `PDF_DPI` and is capped by `PDF_MAX_PIXELS` (defaults to Pillow's safety limit).
+Oversized pages are scaled down automatically to avoid decompression-bomb errors.
 
 ------------------------------------------------------------------------
 
@@ -244,11 +264,38 @@ The frontend is configured to connect to the backend API at `http://localhost:80
 - **Vite** - Build tool and dev server
 - **Modern ES6+** - JavaScript features
 
+### Manual Crop Workflow (Required)
+
+The UI now requires users to draw a single rectangular crop area before inference.
+This ensures consistent scaling and removes PDF whitespace issues.
+
+Workflow:
+
+1. Upload PDF/image.
+2. Frontend calls `POST /preview` to render a preview (PDF = page 1).
+3. User draws a rectangle over the layout.
+4. Frontend sends normalized crop coordinates with `POST /detect`.
+
+Normalized crop payload example:
+
+```json
+{
+  "x": 0.12,
+  "y": 0.08,
+  "width": 0.74,
+  "height": 0.81
+}
+```
+
+Notes:
+- Crop is required in the web UI.
+- Backend validates crop bounds and minimum size (`CROP_MIN_SIZE_PX`).
+- If a crop is provided, PDF auto-crop is skipped.
 
 ### Supported Formats
 
 - **Images**: PNG, JPEG, TIFF (standard formats supported by PIL)
-- **Documents**: PDF (via PyMuPDF integration)
+- **Documents**: PDF (via PyMuPDF integration, first page only)
 
 This ensures **AutoFactoryScope is future-proof and flexible**.
 
