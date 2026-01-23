@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 1
+names: ['robot']
+
+roboflow:
+  workspace: autofactoryscope-mxwe6
+  project: robot_detection_layouts-gz2gr
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/autofactoryscope-mxwe6/robot_detection_layouts-gz2gr/dataset/2
